@@ -1,4 +1,4 @@
-package tal.exact;
+package tal.model;
 
 import lombok.*;
 
