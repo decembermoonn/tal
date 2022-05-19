@@ -16,6 +16,8 @@ public class Main {
         // Those are not included in space complexity.
         int[] colorVector = graph.performCompleteColoringAlgorithm();
         Arrays.stream(colorVector).forEach(System.out::print);
+        System.out.println();
+        graph.printCounters();
     }
 
     private static Graph loadAndCreateGraph() {
