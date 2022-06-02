@@ -44,6 +44,7 @@ public class FileOperations {
 
     public static void saveJsonString(String jsonString) {
         try {
+            System.out.println(jsonString);
             BufferedWriter writer = new BufferedWriter(new FileWriter("generated.json"));
             writer.write(jsonString);
             writer.close();

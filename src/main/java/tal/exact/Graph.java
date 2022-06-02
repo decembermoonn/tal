@@ -17,51 +17,34 @@ public class Graph {
         adjacencyMatrix = graphCreator.prepareAdjacencyMatrix(convertedEdgeList, nodesCount);
     }
 
-    private int firstWhileLoopCounter = 0;
-    private int buildNewColorVectorCounter = 0;
-    private int baseChangeCounter = 0;
     private int checkNewColorVectorCounter = 0;
-    private int checkNewColorVectorColorCounter = 0;
     private int checkNewColorVectorColorInsideMatrixCounter = 0;
-    private int insideColoringIsOkForCertainColorsVectorCounter = 0;
+    private int buildNewColorVectorCounter = 0;
 
     public void printCounters() {
-        System.out.println("firstWhileLoopCounter:" + firstWhileLoopCounter);
-        System.out.println("buildNewColorVectorCounter:" + buildNewColorVectorCounter);
-        System.out.println("baseChangeCounter:" + baseChangeCounter);
         System.out.println("checkNewColorVectorCounter:" + checkNewColorVectorCounter);
-        System.out.println("checkNewColorVectorColorCounter:" + checkNewColorVectorColorCounter);
         System.out.println("checkNewColorVectorColorInsideMatrixCounter:" + checkNewColorVectorColorInsideMatrixCounter);
-        System.out.println("insideColoringIsOkForCertainColorsVectorCounter:" + insideColoringIsOkForCertainColorsVectorCounter);
-        System.out.println("całkowita liczba operacji:" + (firstWhileLoopCounter + checkNewColorVectorColorCounter + checkNewColorVectorColorInsideMatrixCounter));
+        System.out.println("buildNewColorVectorCounter:" + buildNewColorVectorCounter);
+        System.out.println("całkowita liczba operacji:" +
+                (checkNewColorVectorColorInsideMatrixCounter + buildNewColorVectorCounter));
     }
 
     // THE CORE OF COLORING ALGORITHM
     // ONLY THIS PART IS EXAMINED
 
     public int[] performCompleteColoringAlgorithm() {
-        if(nodesCount == 1) return new int[]{0};
+        if (nodesCount == 1) return new int[]{0};
         int[] colorsVector = new int[nodesCount];
         int base = 2;
-        boolean firstCheck = true;
 
-        while(base <= nodesCount) {
-            firstWhileLoopCounter++;
-
-            if(colorsVector != null) {
+        while (base <= nodesCount) {
+            if (colorsVector != null) {
+//                Arrays.stream(colorsVector).forEach(System.out::print);
+//                System.out.println();
                 checkNewColorVectorCounter++;
-                if(coloringIsOkForCertainColorsVector(colorsVector)) return colorsVector;
-                for(int color : colorsVector) {
-                    checkNewColorVectorColorCounter++;
-                    if (color == base - 1 || firstCheck) {
-                        if(coloringIsOkForCertainColorsVector(colorsVector)) return colorsVector;
-                        else break;
-                    }
-                }
-                firstCheck = false;
+                if (coloringIsOkForCertainColorsVector(colorsVector)) return colorsVector;
                 colorsVector = buildNextColorsVector(colorsVector, base);
             } else {
-                baseChangeCounter++;
                 colorsVector = new int[nodesCount];
                 base++;
             }
@@ -71,12 +54,11 @@ public class Graph {
     }
 
     private boolean coloringIsOkForCertainColorsVector(int[] colorsVector) {
-        insideColoringIsOkForCertainColorsVectorCounter++;
-        for(int columnIndex = 0; columnIndex < nodesCount - 1; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < nodesCount - 1; columnIndex++) {
             int nodeColor = colorsVector[columnIndex];
-            for(int elementIndex = columnIndex + 1; elementIndex < nodesCount; elementIndex++) {
+            for (int elementIndex = columnIndex + 1; elementIndex < nodesCount; elementIndex++) {
                 checkNewColorVectorColorInsideMatrixCounter++;
-                if(adjacencyMatrix[elementIndex][columnIndex] == 1) {
+                if (adjacencyMatrix[elementIndex][columnIndex] == 1) {
                     if (nodeColor == colorsVector[elementIndex]) {
                         return false;
                     }
@@ -87,16 +69,16 @@ public class Graph {
     }
 
     private int[] buildNextColorsVector(int[] prevVector, int base) {
-        buildNewColorVectorCounter++;
         prevVector[prevVector.length - 1]++;
 
-        for(int i = prevVector.length - 1; i >= 0; i--) {
+        for (int i = prevVector.length - 1; i >= 0; i--) {
+            buildNewColorVectorCounter++;
             if (prevVector[i] == base) {
                 prevVector[i] = 0;
-                if(i - 1 < 0) {
+                if (i - 1 < 0) {
                     return null;
                 }
-                prevVector[i-1]++;
+                prevVector[i - 1]++;
             }
         }
         return prevVector;
