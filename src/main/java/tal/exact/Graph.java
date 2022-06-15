@@ -20,22 +20,30 @@ public class Graph {
     private int checkNewColorVectorCounter = 0;
     private int checkNewColorVectorColorInsideMatrixCounter = 0;
     private int buildNewColorVectorCounter = 0;
+    private int memoryTaken = 0;
 
     public void printCounters() {
-        System.out.println("checkNewColorVectorCounter:" + checkNewColorVectorCounter);
-        System.out.println("checkNewColorVectorColorInsideMatrixCounter:" + checkNewColorVectorColorInsideMatrixCounter);
-        System.out.println("buildNewColorVectorCounter:" + buildNewColorVectorCounter);
+//        System.out.println("checkNewColorVectorCounter:" + checkNewColorVectorCounter);
+//        System.out.println("checkNewColorVectorColorInsideMatrixCounter:" + checkNewColorVectorColorInsideMatrixCounter);
+//        System.out.println("buildNewColorVectorCounter:" + buildNewColorVectorCounter);
         System.out.println("całkowita liczba operacji:" +
                 (checkNewColorVectorColorInsideMatrixCounter + buildNewColorVectorCounter));
+        System.out.println("złożoność pamięciowa (int):" + memoryTaken);
     }
 
     // THE CORE OF COLORING ALGORITHM
     // ONLY THIS PART IS EXAMINED
 
     public int[] performCompleteColoringAlgorithm() {
-        if (nodesCount == 1) return new int[]{0};
+        if (nodesCount == 1) {
+            checkNewColorVectorColorInsideMatrixCounter++;
+            memoryTaken++;
+            return new int[]{0};
+        }
         int[] colorsVector = new int[nodesCount];
         int base = 2;
+
+        memoryTaken += colorsVector.length + 1; // + base
 
         while (base <= nodesCount) {
             if (colorsVector != null) {
@@ -55,11 +63,10 @@ public class Graph {
 
     private boolean coloringIsOkForCertainColorsVector(int[] colorsVector) {
         for (int columnIndex = 0; columnIndex < nodesCount - 1; columnIndex++) {
-            int nodeColor = colorsVector[columnIndex];
             for (int elementIndex = columnIndex + 1; elementIndex < nodesCount; elementIndex++) {
                 checkNewColorVectorColorInsideMatrixCounter++;
                 if (adjacencyMatrix[elementIndex][columnIndex] == 1) {
-                    if (nodeColor == colorsVector[elementIndex]) {
+                    if (colorsVector[columnIndex] == colorsVector[elementIndex]) {
                         return false;
                     }
                 }
