@@ -3,6 +3,7 @@ package tal.generator;
 import tal.model.Edge;
 import tal.utils.FileOperations;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,6 +14,8 @@ public class Main {
 
     public static void main(String[] args) {
         List<Edge> edgeList = createRandomGraph();
+//        List<Edge> edgeList = createWorstCaseGraph(100);
+//        List<Edge> edgeList = createBestCaseGraph(18);
         saveEdgeListAsJsonFile(edgeList);
     }
 
@@ -88,5 +91,27 @@ public class Main {
     private static void saveEdgeListAsJsonFile(List<Edge> edgeList) {
         String json = FileOperations.makeJsonFromEdgesList(edgeList);
         FileOperations.saveJsonString(json);
+    }
+
+    private static List<Edge> createWorstCaseGraph(int edges) {
+        List<Edge> edgeList = new ArrayList<>();
+        for(int i=1;i<edges+1;i++) {
+            edgeList.add(new Edge(0,i));
+        }
+
+        return edgeList;
+    }
+
+    private static List<Edge> createBestCaseGraph(int edges) {
+        List<Edge> edgeList = new ArrayList<>();
+        int src=0;
+        int dest=1;
+
+        for(int i=0;i<edges;i++) {
+            edgeList.add(new Edge(src, dest));
+            src += 2;
+            dest += 2;
+        }
+        return edgeList;
     }
 }

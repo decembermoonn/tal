@@ -14,15 +14,18 @@ public class Main {
         // Adjacency matrix - adjacencyMatrix variable
         // Count of nodes - nodesCount variable
         // Those are not included in space complexity.
-//        int[] colorVector = graph.performCompleteColoringAlgorithm();
-//        Arrays.stream(colorVector).forEach(System.out::print);
-//        System.out.println();
-//        graph.printCounters();
+        int[] colorVector = graph.performCompleteColoringAlgorithm();
+        Arrays.stream(colorVector).forEach(System.out::print);
+        System.out.println();
+        graph.printCounters();
 
         int[] colorVectorHeuristic = graph.performHeuristicLFColoringAlgorithm();
         Arrays.stream(colorVectorHeuristic).forEach(System.out::print);
         System.out.println();
         graph.printHeuristicCountes();
+
+        System.out.println("Ilość kolorów dla dokładnego: " + (Arrays.stream(colorVector).max().getAsInt() + 1));
+        System.out.println("Ilość kolorów dla heurystycznego: " + (Arrays.stream(colorVectorHeuristic).max().getAsInt() + 1));
     }
 
     private static Graph loadAndCreateGraph() {
