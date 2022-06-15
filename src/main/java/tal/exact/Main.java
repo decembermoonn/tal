@@ -14,10 +14,10 @@ public class Main {
         // Adjacency matrix - adjacencyMatrix variable
         // Count of nodes - nodesCount variable
         // Those are not included in space complexity.
-        int[] colorVector = graph.performCompleteColoringAlgorithm();
-        Arrays.stream(colorVector).forEach(System.out::print);
-        System.out.println();
-        graph.printCounters();
+//        int[] colorVector = graph.performCompleteColoringAlgorithm();
+//        Arrays.stream(colorVector).forEach(System.out::print);
+//        System.out.println();
+//        graph.printCounters();
 
         int[] colorVectorHeuristic = graph.performHeuristicLFColoringAlgorithm();
         Arrays.stream(colorVectorHeuristic).forEach(System.out::print);

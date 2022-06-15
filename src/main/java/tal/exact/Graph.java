@@ -26,9 +26,10 @@ public class Graph {
     private int memoryTaken = 0;
     private int createPairsCounter = 0;
     private int sortCounter = 0;
-    private int findUsedColorsCounter;
-    private int findUnusedColorCounter;
+    private int findUsedColorsCounter = 0;
+    private int findUnusedColorCounter = 0;
 
+    private int heuristicMemoryUsed = 0;
 
     public void printCounters() {
 //        System.out.println("checkNewColorVectorCounter:" + checkNewColorVectorCounter);
@@ -45,6 +46,10 @@ public class Graph {
         System.out.println("findUsedColorsCounter: " + findUsedColorsCounter);
         System.out.println("findUnusedColorCounter: " + findUnusedColorCounter);
         System.out.println("całkowita liczba operacji: " + (createPairsCounter + sortCounter + findUsedColorsCounter + findUnusedColorCounter));
+    }
+
+    public void printHeuristicMemoryUsed(int key) {
+        System.out.println(key + " - Currently used memory (ints):" + heuristicMemoryUsed);
     }
 
     // THE CORE OF COLORING ALGORITHM
@@ -78,21 +83,23 @@ public class Graph {
     }
 
     public int[] performHeuristicLFColoringAlgorithm() {
+
         if (nodesCount == 1) return new int[]{0};
         int[] colorsVector = new int[nodesCount];
 
-        for(int color : colorsVector) { //Set node colors to impossible value
-            color = -1;
-        }
+        heuristicMemoryUsed += nodesCount;
+
+        //Set node colors to impossible value
+        Arrays.fill(colorsVector, -1);
 
         List<Pair> nodeDegreeList = new ArrayList<>();
         int degreeCounter;
 
-        for(int i=0; i<adjacencyMatrix.length; i++) {   //Create list of pairs (nodeId, nodeDegree)
+        for(int i=0; i<nodesCount; i++) {   //Create list of pairs (nodeId, nodeDegree)
 
             degreeCounter = 0;
 
-            for(int j=0; j<adjacencyMatrix.length; j++) {
+            for(int j=0; j<nodesCount; j++) {
                 if(adjacencyMatrix[i][j] == 1)
                 {
                     degreeCounter++;
@@ -100,6 +107,7 @@ public class Graph {
             }
             nodeDegreeList.add(new Pair(i, degreeCounter));
             createPairsCounter++;
+            heuristicMemoryUsed += 2;
         }
 
         nodeDegreeList.sort((o1, o2) -> {   //Sort descendingly by node degree
@@ -117,7 +125,7 @@ public class Graph {
             color = 0;
             nodeId = p.getKey();
 
-            for(int i=0; i<adjacencyMatrix.length; i++) { //Find used colors for adjacent nodes
+            for(int i=0; i<nodesCount; i++) { //Find used colors for adjacent nodes
                 if(adjacencyMatrix[nodeId][i] == 1) {
                     usedColors.add(colorsVector[i]);
                     findUsedColorsCounter++;
@@ -139,6 +147,18 @@ public class Graph {
             }
 
             colorsVector[nodeId] = color;
+
+            heuristicMemoryUsed += usedColors.size();
+            printHeuristicMemoryUsed(p.getKey());
+            heuristicMemoryUsed -= usedColors.size();
+//            for(int n: usedColors) {
+//                System.out.print(n + " ");
+//            }
+//            System.out.println();
+//            for(int n: colorsVector) {
+//                System.out.print(n + " ");
+//            }
+//            System.out.println();
         }
 
         return colorsVector;
