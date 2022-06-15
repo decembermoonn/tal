@@ -1,6 +1,7 @@
 package tal.exact;
 
 import tal.model.Edge;
+import tal.model.Pair;
 
 import java.util.*;
 
@@ -10,6 +11,8 @@ public class Graph {
     public final GraphCreator graphCreator = new GraphCreator();
     private final int nodesCount;
     private final int[][] adjacencyMatrix;
+
+
 
     public Graph(List<Edge> edgeList) {
         nodesCount = edgeList.size();
@@ -21,6 +24,11 @@ public class Graph {
     private int checkNewColorVectorColorInsideMatrixCounter = 0;
     private int buildNewColorVectorCounter = 0;
     private int memoryTaken = 0;
+    private int createPairsCounter = 0;
+    private int sortCounter = 0;
+    private int findUsedColorsCounter;
+    private int findUnusedColorCounter;
+
 
     public void printCounters() {
 //        System.out.println("checkNewColorVectorCounter:" + checkNewColorVectorCounter);
@@ -29,6 +37,14 @@ public class Graph {
         System.out.println("całkowita liczba operacji:" +
                 (checkNewColorVectorColorInsideMatrixCounter + buildNewColorVectorCounter));
         System.out.println("złożoność pamięciowa (int):" + memoryTaken);
+    }
+
+    public void printHeuristicCountes() {
+        System.out.println("createPairsCounter: " + createPairsCounter);
+        System.out.println("sortCounter: " + sortCounter);
+        System.out.println("findUsedColorsCounter: " + findUsedColorsCounter);
+        System.out.println("findUnusedColorCounter: " + findUnusedColorCounter);
+        System.out.println("całkowita liczba operacji: " + (createPairsCounter + sortCounter + findUsedColorsCounter + findUnusedColorCounter));
     }
 
     // THE CORE OF COLORING ALGORITHM
@@ -59,6 +75,73 @@ public class Graph {
         }
 
         return null;
+    }
+
+    public int[] performHeuristicLFColoringAlgorithm() {
+        if (nodesCount == 1) return new int[]{0};
+        int[] colorsVector = new int[nodesCount];
+
+        for(int color : colorsVector) { //Set node colors to impossible value
+            color = -1;
+        }
+
+        List<Pair> nodeDegreeList = new ArrayList<>();
+        int degreeCounter;
+
+        for(int i=0; i<adjacencyMatrix.length; i++) {   //Create list of pairs (nodeId, nodeDegree)
+
+            degreeCounter = 0;
+
+            for(int j=0; j<adjacencyMatrix.length; j++) {
+                if(adjacencyMatrix[i][j] == 1)
+                {
+                    degreeCounter++;
+                }
+            }
+            nodeDegreeList.add(new Pair(i, degreeCounter));
+            createPairsCounter++;
+        }
+
+        nodeDegreeList.sort((o1, o2) -> {   //Sort descendingly by node degree
+            sortCounter++;
+            if(o1.getValue() < o2.getValue()) return 1;
+            else if(o1.getValue() > o2.getValue()) return -1;
+            return 0;
+        });
+
+        int color;
+        int nodeId;
+        List<Integer> usedColors;
+        for(Pair p : nodeDegreeList) {
+            usedColors = new ArrayList<>();
+            color = 0;
+            nodeId = p.getKey();
+
+            for(int i=0; i<adjacencyMatrix.length; i++) { //Find used colors for adjacent nodes
+                if(adjacencyMatrix[nodeId][i] == 1) {
+                    usedColors.add(colorsVector[i]);
+                    findUsedColorsCounter++;
+                }
+            }
+
+            usedColors.sort((i1, i2) -> { //Sort ascending by color values
+                sortCounter++;
+                if(i1 < i2) return -1;
+                else if(i1 > i2) return 1;
+                return 0;
+            });
+
+            for(int usedColor: usedColors) { //Find the lowest unused color
+                if(color == usedColor)  {
+                    color++;
+                    findUnusedColorCounter++;
+                }
+            }
+
+            colorsVector[nodeId] = color;
+        }
+
+        return colorsVector;
     }
 
     private boolean coloringIsOkForCertainColorsVector(int[] colorsVector) {
