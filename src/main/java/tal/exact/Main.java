@@ -18,6 +18,11 @@ public class Main {
         Arrays.stream(colorVector).forEach(System.out::print);
         System.out.println();
         graph.printCounters();
+
+        int[] colorVectorHeuristic = graph.performHeuristicLFColoringAlgorithm();
+        Arrays.stream(colorVectorHeuristic).forEach(System.out::print);
+        System.out.println();
+        graph.printHeuristicCountes();
     }
 
     private static Graph loadAndCreateGraph() {
