@@ -121,7 +121,6 @@ public class Graph {
                 if(adjacencyMatrix[nodeId][i] == 1) {
                     usedColors.add(colorsVector[i]);
                     findUsedColorsCounter++;
-
                 }
             }
 
